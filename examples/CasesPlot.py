@@ -4,14 +4,10 @@ from dash import dash
 from gs_quant.session import GsSession, Environment
 from gs_quant.data import Dataset
 from datetime import date
-<<<<<<< Updated upstream
 from credentials.config import GSConfig
-=======
->>>>>>> Stashed changes
 
 from gs_quant.timeseries import datetime
 
-from project.credentials.config import GSConfig
 import numpy as np
 import pandas as pd
 from plotly.subplots import make_subplots
