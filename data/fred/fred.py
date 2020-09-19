@@ -3,7 +3,7 @@
 https://www.quandl.com/data/FRED-Federal-Reserve-Economic-Data
 """
 import quandl
-import us
+import us  # https://github.com/unitedstates/python-us
 import pandas as pd
 
 from typing import List
