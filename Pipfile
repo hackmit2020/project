@@ -8,6 +8,7 @@ verify_ssl = true
 [packages]
 gs-quant = "*"
 dash = "*"
+quandl = "*"
 
 [requires]
 python_version = "3.8"
