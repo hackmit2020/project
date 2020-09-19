@@ -31,7 +31,12 @@ class Data(metaclass=ABCMeta):
         df = self._local_load()
         if df is None:
             df = self._remote_load()
+
+            if df.__class__ != DataFrame:
+                raise ValueError("`_remote_load()` did not return DataValue instance")
+
             df.to_feather(self.local_file)
+
         return df
 
 
