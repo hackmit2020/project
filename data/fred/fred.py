@@ -51,5 +51,6 @@ class Fred(Data):
 
 
         data = pd.concat(data_sets)
-        data.reset_index(inplace=True, drop=True)
+        data.rename_axis("Date", inplace=True)
+        data.reset_index(inplace=True)
         return data
