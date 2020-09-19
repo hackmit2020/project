@@ -1,3 +1,9 @@
+""" Goldman Sachs Quant data loading
+
+https://developer.gs.com/docs/covid/data/datasets/
+https://marquee.gs.com/s/discover/data-services/catalog
+"""
+
 from ..data import Data, DataFrame
 from credentials.config import GSConfig
 from gs_quant.session import GsSession

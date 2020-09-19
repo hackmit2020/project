@@ -33,6 +33,10 @@ class JHCovid(Data):
     CURRENT_DATA_PREFIX = "COVID-19-master/csse_covid_19_data/csse_covid_19_daily_reports_us/"
 
     def _remote_load_archive(self) -> DataFrame:
+        """ Load archived COVID-19 data
+
+        https://github.com/CSSEGISandData/COVID-19/tree/master/archived_data/archived_time_series
+        """
         data_set = None
         for data_type, source in self.ARCHIVE_URLS.items():
             r = requests.get(source)

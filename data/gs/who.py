@@ -1,4 +1,7 @@
-""" WHO Data loading """
+""" WHO Data loading
+
+https://developer.gs.com/docs/covid/data/datasets/who/
+"""
 from datetime import date
 
 from gs_quant.data import Dataset

@@ -1,4 +1,7 @@
-""" Google Mobility Data loading """
+""" Google Mobility Data loading
+
+https://www.google.com/covid19/mobility/
+"""
 from datetime import date
 import tempfile
 import requests
