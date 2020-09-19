@@ -10,6 +10,7 @@ gs-quant = "*"
 dash = "*"
 quandl = "*"
 pyarrow = "*"
+us = "*"
 
 [requires]
 python_version = "3.8"

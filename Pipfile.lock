@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "9b241e04821bddf00144e7e1751f61437e6a40e253324733544bd9b214c5c7dc"
+            "sha256": "cce638d5ba9e836f420079353db3db09a76d5a868d2a58f046048dc30b5cda3f"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -199,6 +199,12 @@
             ],
             "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'",
             "version": "==1.1.0"
+        },
+        "jellyfish": {
+            "hashes": [
+                "sha256:5104e45a2b804b48a46a92a5e6d6e86830fe60ae83b1da32c867402c8f4c2094"
+            ],
+            "version": "==0.6.1"
         },
         "jinja2": {
             "hashes": [
@@ -506,6 +512,13 @@
             ],
             "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4' and python_version < '4'",
             "version": "==1.25.10"
+        },
+        "us": {
+            "hashes": [
+                "sha256:cb11ad0d43deff3a1c3690c74f0c731cff5b862c73339df2edd91133e1496fbc"
+            ],
+            "index": "pypi",
+            "version": "==2.0.2"
         },
         "websockets": {
             "hashes": [

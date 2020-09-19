@@ -3,6 +3,10 @@
 https://www.quandl.com/data/FRED-Federal-Reserve-Economic-Data
 """
 import quandl
+import us
+import pandas as pd
+
+from typing import List
 
 from credentials.config import QuandlConfig
 
@@ -11,11 +15,8 @@ from ..data import Data, DataFrame
 quandl.ApiConfig.api_key = QuandlConfig.api_key
 
 
-STATES = ["AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DC", "DE", "FL", "GA",
-          "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD",
-          "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ",
-          "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC",
-          "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"]
+STATES = us.states.mapping('fips', 'abbr', us.STATES)
+
 
 class Fred(Data):
     NAME = "fred"
@@ -24,25 +25,31 @@ class Fred(Data):
         'US': 'FRED/UNRATE',
     }
 
+    def __load_df(self, region):
+        if region in self.SPECIAL_DATA_SETS:
+            set_name = self.SPECIAL_DATA_SETS[region]
+        else:
+            set_name = 'FRED/{}UR'.format(region)
+
+        df = quandl.get(set_name, column_index='1')
+        #df.rename(columns={'Value': region}, inplace=True)
+        df.rename(columns={'Value': 'Rate'}, inplace=True)
+        return df
+
     def _remote_load(self) -> DataFrame:
         print("Remote loading FRED data...")
 
-        data_set: DataFrame = None
+        data_sets: List[DataFrame] = []
 
-        for region in STATES + ['US']:
-            if region in self.SPECIAL_DATA_SETS:
-                set_name = self.SPECIAL_DATA_SETS[region]
-            else:
-                set_name = 'FRED/{}UR'.format(region)
-
-            df = quandl.get(set_name, column_index='1')
-            df.rename(columns={'Value': region}, inplace=True)
-
-            if data_set is None:
-                data_set = df
-            else:
-                data_set = data_set.merge(right=df, how='left', on=['Date'])
+        for fips, region in STATES.items():  # + ['US']
             print(region)
+            df = self.__load_df(region)
+            df['Region'] = region
+            df['fips'] = fips
 
-        data_set.reset_index(inplace=True, drop=True)
-        return data_set
+            data_sets.append(df)
+
+
+        data = pd.concat(data_sets)
+        data.reset_index(inplace=True, drop=True)
+        return data
