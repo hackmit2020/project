@@ -1,7 +1,9 @@
 import quandl
 import plotly.express as px
 
-quandl.ApiConfig.api_key = '4CtRiJEsr5afhPxisEcL'
+from credentials.config import QuandlConfig
+
+quandl.ApiConfig.api_key = QuandlConfig.api_key
 
 
 df = quandl.get('FRED/UNRATE', column_index='1')
