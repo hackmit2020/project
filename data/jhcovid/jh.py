@@ -9,6 +9,7 @@ import pandas as pd
 import requests
 import io
 import tempfile
+import us
 from datetime import datetime
 
 from ..data import Data, DataFrame
@@ -64,6 +65,7 @@ class JHCovid(Data):
                 data_set = data_set.merge(
                     right=data, how='left', on=['Province/State', 'Country/Region', 'Date', 'Lat', 'Long'])
 
+        data_set['FIPS'] = data_set['Province/State'].map(us.states.mapping('name', 'fips'))
         return data_set
 
     def _remote_load_current(self) -> DataFrame:
@@ -94,6 +96,8 @@ class JHCovid(Data):
                             'Long_': 'Long',
                         },
                         inplace=True)
+
+                    data['FIPS'] = data['FIPS'].astype(int, errors='ignore').astype(str)
 
                     data['Date'] = date
 
