@@ -4,7 +4,7 @@ from dash import dash
 from gs_quant.session import GsSession, Environment
 from gs_quant.data import Dataset
 from datetime import date
-from project.credentials.config import GSConfig
+from credentials.config import GSConfig
 
 import numpy as np
 
