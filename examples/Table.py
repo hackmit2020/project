@@ -12,7 +12,7 @@ import pandas as pd
 
 GsSession.use(client_id=GSConfig.client_id, client_secret=GSConfig.client_secret, scopes=('read_product_data',))
 
-dataset = Dataset('COVID19_SUBDIVISION_DAILY_CDC')
+dataset = Dataset('COVID19_COUNTRY_DAILY_WHO')
 df = dataset.get_data(countryId='US', start=date(2019, 1, 1))
 
 app = dash.Dash(__name__)
