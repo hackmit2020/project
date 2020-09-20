@@ -288,12 +288,16 @@ app.layout = html.Div(
                     [
                         html.Div(
                             [
+                                html.A(html.P("Google Mobility data", className="graph-title"), href="https://www.google.com/covid19/mobility/",
+                                       target="_blank", className="graph-title"),
                                 dcc.Graph(id='mobility', className="graph")
                             ],
                             className="row"
                         ),
                         html.Div(
                             [
+                                html.A(html.P("State Unemployment rate", className="graph-title"), href="https://www.quandl.com/data/FRED-Federal-Reserve-Economic-Data",
+                                       target="_blank"),
                                 dcc.Graph(id='econ', className="graph")
                             ],
                             className="row"
