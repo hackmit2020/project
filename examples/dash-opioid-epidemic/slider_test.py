@@ -55,7 +55,8 @@ DEFAULT_COLORSCALE = [
 
 slider_marks = dict(zip(MONTHS_NUM,MONTHS))
 
-df_month = pd.read_csv(DATA_DIR+'monthly_covid.csv')
+jh = JHCovid()
+df_month = jh.get()
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
@@ -77,7 +78,7 @@ app.layout = html.Div([
     [Input('my-slider', 'value')])
 def update_figure(selected_month):
     #nov_mask = df_month['Dates'].map(lambda x: x.month) == 11
-    filtered_df = df_month[df_month['Date'].map(lambda x: datetime.strptime(x,'%Y-%m-%d').month) == selected_month]
+    filtered_df = df_month[df_month['Date'].map(lambda x: x.month) == selected_month]
     #filtered_df = df[df.year == selected_month]
 
     print(filtered_df)
