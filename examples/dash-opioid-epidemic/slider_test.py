@@ -17,6 +17,10 @@ from urllib.request import urlopen
 import json
 
 from data.jhcovid.jh import JHCovid
+from data.nytimes import NYTQuery
+
+nytimes = NYTQuery()
+articles = nytimes.get()
 
 PACKAGE_DIR = os.path.dirname(__file__)
 DATA_DIR = os.path.join(PACKAGE_DIR, "data/")
@@ -60,21 +64,47 @@ df_month = jh.get()
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
-app.layout = html.Div([
-    dcc.Graph(id='graph-with-slider'),
-    dcc.Slider(
-        id='my-slider',
-        min=2,
-        max=9,
-        step=None,
-        marks=slider_marks,
-        value=2
-    )
-])
+app.layout = html.Div(
+    [
+        html.Div(
+            [
+                dcc.Slider(
+                    id='my-slider',
+                    min=2,
+                    max=9,
+                    step=None,
+                    marks=slider_marks,
+                    value=2
+                ),
+            ]
+        ),
+        html.Div(
+            [
+                html.Div(
+                    [
+                        dcc.Graph(id='graph-with-slider'),
+                    ],
+                    className="two-thirds column"
+                ),
+                html.Div(
+                    [
+                        html.H6("New York Times"),
+                        html.P("Loading articles...", id="nytimes-content")
+
+                    ],
+                    className="one-third column container"
+                )
+            ],
+            className="row"
+        ),
+    ],
+    className="container"
+)
 
 
 @app.callback(
-    Output('graph-with-slider', 'figure'),
+    [Output('graph-with-slider', 'figure'),
+     Output('nytimes-content', 'children'),],
     [Input('my-slider', 'value')])
 def update_figure(selected_month):
     #nov_mask = df_month['Dates'].map(lambda x: x.month) == 11
@@ -94,7 +124,10 @@ def update_figure(selected_month):
 
     fig.update_layout(transition_duration=500)
 
-    return fig
+    month_articles = articles[articles['date'].map(lambda x: x.month) == selected_month]
+    article_html = html.Div([html.A(html.P(c['headline']), href=c['url'], target='_blank') for c in month_articles.iloc])
+
+    return (fig, article_html)
 
 
 if __name__ == '__main__':

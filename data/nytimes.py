@@ -31,7 +31,7 @@ class NYTQuery(Data):
     NAME = "nytimes"
 
     SEARCH_URL = "https://api.nytimes.com/svc/search/v2/articlesearch.json?"
-    START_DATE = date(2020, 3, 1)
+    START_DATE = date(2020, 2, 1)
     END_DATE = date.today()
     DATES = pd.date_range(START_DATE, END_DATE-timedelta(days=1), freq='M')
 
@@ -66,7 +66,7 @@ class NYTQuery(Data):
     def _remote_load(self) -> DataFrame:
         all_articles = []
 
-        for month_num in range(3,9+1):
+        for month_num in range(2,9+1):
             start_day = date(2020, month_num, 1)
             end_day = date(2020, month_num+1, 1) - timedelta(days=1)
             a = self.query_range(start_day, end_day)
