@@ -101,11 +101,11 @@ for i in range(len(step_df)):
         population = population_dictionary[step_df.iloc[i]["Province/State"]]
         population_list.append(population)
 
-        print('SUCCESS')
-        print()
+        #print('SUCCESS')
+        #print()
     except:
-        print('FAIL')
-        print()
+        #print('FAIL')
+        #print()
         population = 10
         population_list.append(population)
         # normalized_change.append(step_df.iloc[i]["Change"]/0.5)
@@ -146,9 +146,17 @@ app.layout = html.Div(
         html.Div(
             [
                 html.H1("COVis"),
-                html.H6("HackMIT 2020")
+                html.H6("HackMIT 2020"),
+                html.P(
+                    id="description",
+                    children="† Deaths are classified using the International Classification of Diseases, \
+                    Tenth Revision (ICD–10). Drug-poisoning deaths are defined as having ICD–10 underlying \
+                    cause-of-death codes X40–X44 (unintentional), X60–X64 (suicide), X85 (homicide), or Y10–Y14 \
+                    (undetermined intent).",
+                ),
             ]
         ),
+
         html.Div(
             [
                 dcc.Slider(
@@ -170,8 +178,8 @@ app.layout = html.Div(
                     className="two-thirds column"
                 ),
                 html.Div(
-                    [
-                        html.H5("New York Times"),
+                    [ html.Img(id="nyt", src=app.get_asset_url("new-york-times-logo-black-and-white.png")),
+                        #html.H5("New York Times"),
                         html.P("Loading articles...", id="nytimes-content")
 
                     ],
