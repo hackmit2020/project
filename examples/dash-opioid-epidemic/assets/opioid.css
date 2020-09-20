@@ -313,15 +313,14 @@ p {
 }
 
 #heatmap-title {
-    font-family: "Playfair Display", sans-serif;
     font-size: 2rem;
 }
 
 #description {
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     border-left: #3CBB75FF solid 1rem;
     padding-left: 1rem;
-    max-width: 100rem;
+    max-width: 105rem;
     margin: 2rem 0 3rem 0;
 }
 
@@ -653,6 +652,7 @@ hr {
     height: 8rem;
 }
 
+/* Old: color #2cfec1 */
 .rc-slider-dot-active, .rc-slider-handle {
     border-color: #3CBB75FF !important;
 }

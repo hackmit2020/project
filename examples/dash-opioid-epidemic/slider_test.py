@@ -94,8 +94,8 @@ external_stylesheets = ['styles.css']
 step = 10
 step_df, date_increments = df_step(df_all_data, step)
 slider_marks, value_marks = slider_steps(step, date_increments)
-slider_set = (datetime(2020,5,15) - MIN_DATE).days
-slider_set = int(slider_set - (slider_set%step))
+slider_set_date = (datetime(2020,5,15) - MIN_DATE).days
+slider_set = int(slider_set_date - (slider_set_date%step))
 
 population_list = []
 normalized_change = []
@@ -164,10 +164,11 @@ app.layout = html.Div(
                 html.H6("HackMIT 2020"),
                 html.P(
                     id="description",
-                    children="† Deaths are classified using the International Classification of Diseases, \
-                    Tenth Revision (ICD–10). Drug-poisoning deaths are defined as having ICD–10 underlying \
-                    cause-of-death codes X40–X44 (unintentional), X60–X64 (suicide), X85 (homicide), or Y10–Y14 \
-                    (undetermined intent).",
+                    children= "Throughout this global pandemic, there have been thousands of sources tracking the pandemic. "
+                              "It is overwhelming as individuals for us to process these incompatible data points "
+                              "and understand how it captures the current state of the country. COVis seeks to address "
+                              "this asymmetry and integrates data on healthcare, economics, media, and legislation, "
+                              "correlated by date. Move the slider to see the progression."
                 ),
             ]
         ),
@@ -185,7 +186,9 @@ app.layout = html.Div(
             ]
         ),
         html.Div(
-            [
+            [ html.P("Heatmap displaying new Covid cases per 100,000 people on {0}".format(
+                ('May 15'), id="heatmap-title",
+                                )),
                 html.Div(
                     [
                         dcc.Graph(id='graph-with-slider'),
