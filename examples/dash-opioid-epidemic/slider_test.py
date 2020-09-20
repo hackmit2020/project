@@ -186,11 +186,10 @@ app.layout = html.Div(
             ]
         ),
         html.Div(
-            [ html.P("Heatmap displaying new Covid cases per 100,000 people on {0}".format(
-                ('May 15'), id="heatmap-title",
-                                )),
-                html.Div(
+            [ #html.P("Heatmap displaying new Covid cases per 100,000 people", id='heatmap-title'),
+            html.Div( id='heatmap-container', children=
                     [
+                        html.P("Heatmap displaying new Covid cases per 100,000 people", id='heatmap-title'),
                         dcc.Graph(id='graph-with-slider'),
                     ],
                     className="two-thirds column"
@@ -321,7 +320,14 @@ def update_figure(day_increment):
                                opacity=1,
                                hover_name='Cases per 100,000 people')
     #fig.colorbar.Title('Title')
-    fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0}, transition_duration=500)
+    # fig.update_layout(
+    #     font_family="Courier New",
+    #     font_color="blue",
+    #     title_font_family="Times New Roman",
+    #     title_font_color="red",
+    #     legend_title_font_color="green"
+    # )
+    fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0}, transition_duration=500, title_font_color="white",)
 
     month_articles = articles[articles['date'].map(lambda x: x.month) == goal_date.month]
     article_html = html.Div([html.A(html.P(c['headline']), href=c['url'], target='_blank') for c in month_articles.iloc])
