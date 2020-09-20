@@ -108,10 +108,20 @@ class JHCovid(Data):
 
         return pd.concat(data_sets)
 
+    def _calculate(self, d) -> DataFrame:
+        """ Calculate confirmed cases changes """
+        d.sort_values('Date', inplace=True)
+        for s in us.states.STATES:
+            d.loc[d['FIPS'] == s.fips, 'Change'] = d[d['FIPS'] == s.fips]['Confirmed'].diff()
+
+        return d
+
     def _remote_load(self) -> DataFrame:
         archive = self._remote_load_archive()
         current = self._remote_load_current()
         combined_data = pd.concat([archive, current])
+
+        self._calculate(combined_data)
         combined_data.reset_index(inplace=True, drop=True)
 
         return combined_data
