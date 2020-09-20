@@ -2,6 +2,7 @@
 import dash
 import dash_html_components as html
 import dash_core_components as dcc
+import us
 import os
 import pandas as pd
 from dash.dependencies import Input, Output, State
@@ -12,6 +13,7 @@ import json
 
 from data.jhcovid.jh import JHCovid
 from data.nytimes import NYTQuery
+from data.gmobility.gm import GMData
 
 nytimes = NYTQuery()
 articles = nytimes.get()
@@ -64,6 +66,9 @@ def slider_steps(step, date_increments):
 with urlopen('https://raw.githubusercontent.com/PublicaMundi/MappingAPI/master/data/geojson/us-states.json') as response:
     states = json.load(response)
 
+mb = GMData()
+mobility = mb.get()
+
 PACKAGE_DIR = os.path.dirname(__file__)
 DATA_DIR = os.path.join(PACKAGE_DIR, "data/")
 
@@ -111,6 +116,21 @@ step_df['Normalized change'] = normalized_change
 #jh = JHCovid()
 #df_month = jh.get()
 
+state_select_options = [
+    {"label": str(state.name), "value": state.fips}
+    for state in us.STATES
+]
+
+mobility_select_options = [
+    {"label": name.replace("_", " "), "value": name}
+    for name in ['retail_and_recreation_percent_change_from_baseline',
+                 'grocery_and_pharmacy_percent_change_from_baseline',
+                 'parks_percent_change_from_baseline',
+                 'transit_stations_percent_change_from_baseline',
+                 'workplaces_percent_change_from_baseline',
+                 'residential_percent_change_from_baseline']
+]
+
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 app.layout = html.Div(
@@ -151,13 +171,36 @@ app.layout = html.Div(
             [
                 html.Div(
                     [
-                        dcc.Graph(id='graph2')
+                        html.P("Select state to analyze:",className='panel-text'),
+                        dcc.Dropdown(
+                            id="state-selection",
+                            options=state_select_options,
+                            multi=False,
+                            value='44',
+                            className="dcc_control",
+                        ),
+                        dcc.Dropdown(
+                            id="mobility-selection",
+                            options=mobility_select_options,
+                            multi=False,
+                            value='retail_and_recreation_percent_change_from_baseline',
+                            className="dcc_control",
+                        ),
+                        dcc.Checklist(
+                            id="county-show",
+                            options=[
+                                {'label': 'Separate counties', 'value': 'county'},
+                            ],
+                            value=[],
+                            className="dcc_control"
+                        )
+
                     ],
-                    className="one-third column"
+                    className="one-third column panel"
                 ),
                 html.Div(
                     [
-                        dcc.Graph(id='graph3')
+                        dcc.Graph(id='mobility')
                     ],
                     className="two-thirds column"
                 ),
@@ -204,6 +247,33 @@ def update_figure(day_increment):
     article_html = html.Div([html.A(html.P(c['headline']), href=c['url'], target='_blank') for c in month_articles.iloc])
 
     return (fig, article_html)
+
+
+@app.callback(
+    Output("mobility", "figure"),
+    [
+        Input("state-selection", "value"),
+        Input("mobility-selection", "value"),
+        Input("county-show", "value"),
+    ],
+)
+def update_production_text(state, mobility_set, county_show):
+    print(state)
+    state_mobility = mobility[mobility['sub_region_1'] == us.states.lookup(state).name]
+    #print(state_mobility)
+    state_mobility.dropna(subset=['sub_region_2'], inplace=True)
+    print("SUM", state_mobility.isna().sum())
+
+    kwargs = {}
+    if county_show:
+        kwargs['color'] = 'sub_region_2'
+    else:
+        state_mobility = state_mobility.groupby(state_mobility['date']).mean()
+        state_mobility.reset_index(inplace=True)
+    fig = px.line(state_mobility, x='date', y=mobility_set, **kwargs)
+
+    return fig
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)

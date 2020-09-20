@@ -431,4 +431,16 @@ there.
 }
 .graph-row {
   margin: 10px 0;
+  height: 500px;
+}
+.panel {
+  height: 500px;
+  background: #ffffff;
+  padding: 10px;
+}
+p.panel-text {
+  color: #1d2731;
+}
+.dcc_control {
+  margin: 25px 0px;
 }
