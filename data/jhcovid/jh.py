@@ -66,8 +66,7 @@ class JHCovid(Data):
                     right=data, how='left', on=['Province/State', 'Country/Region', 'Date', 'Lat', 'Long'])
 
         data_set['FIPS'] = data_set['Province/State'].map(us.states.mapping('name', 'fips'))
-        # VERY IMPORTANT: must be nullable integer type (Int64)
-        data_set['FIPS'] = data_set['FIPS'].astype('Int64', errors='ignore').astype(str)
+
         return data_set
 
     def _remote_load_current(self) -> DataFrame:
@@ -100,7 +99,7 @@ class JHCovid(Data):
                         inplace=True)
 
                     # VERY IMPORTANT: must be nullable integer type (Int64)
-                    data['FIPS'] = data['FIPS'].astype('Int64', errors='ignore').astype(str)
+                    data['FIPS'] = data['FIPS'].astype('Int64', errors='ignore').map("{:02d}".format, na_action='ignore')
 
 
                     data['Date'] = date
