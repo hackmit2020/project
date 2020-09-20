@@ -8,7 +8,7 @@ import re
 
 import pandas as pd
 from dash.dependencies import Input, Output, State
-import cufflinks as cf
+#import cufflinks as cf
 
 
 import plotly.express as px
