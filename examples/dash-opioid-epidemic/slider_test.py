@@ -97,6 +97,24 @@ app.layout = html.Div(
             ],
             className="row"
         ),
+        html.Div(
+            [
+                html.Div(
+                    [
+                        dcc.Graph(id='graph2')
+                    ],
+                    className="one-third column"
+                ),
+                html.Div(
+                    [
+                        dcc.Graph(id='graph3')
+                    ],
+                    className="two-thirds column"
+                ),
+            ],
+            className="row"
+        )
+
     ],
     className="container"
 )
