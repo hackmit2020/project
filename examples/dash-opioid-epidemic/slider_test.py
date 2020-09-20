@@ -16,6 +16,7 @@ from data.jhcovid.jh import JHCovid
 from data.nytimes import NYTQuery
 from data.gmobility.gm import GMData
 from data.fred.fred import Fred
+from data.gs.who import WHOData
 
 mapbox_access_token = "pk.eyJ1IjoicGxvdGx5bWFwYm94IiwiYSI6ImNrOWJqb2F4djBnMjEzbG50amg0dnJieG4ifQ.Zme1-Uzoi75IaFbieBDl3A"
 mapbox_style = "mapbox://styles/plotlymapbox/cjvprkf3t1kns1cqjxuxmwixz"
@@ -82,6 +83,9 @@ policy_data = ox.get()
 
 mb = GMData()
 mobility = mb.get()
+
+who = WHOData()
+who_data = who.get()
 
 PACKAGE_DIR = os.path.dirname(__file__)
 DATA_DIR = os.path.join(PACKAGE_DIR, "data/")
@@ -162,15 +166,35 @@ app.layout = html.Div(
             [
                 html.H1("COVis"),
                 html.H6("HackMIT 2020"),
-                html.P(
-                    id="description",
-                    children= "Throughout this global pandemic, there have been thousands of sources tracking the pandemic. "
-                              "It is overwhelming as individuals for us to process these incompatible data points "
-                              "and understand how it captures the current state of the country. COVis seeks to address "
-                              "this asymmetry and integrates data on healthcare, economics, media, and legislation, "
-                              "correlated by date. Move the slider to see the progression."
-                ),
             ]
+        ),
+        html.Div(
+            [
+                html.Div(
+                    [
+
+                        html.P(
+                            id="description",
+                            children= "Throughout this global pandemic, there have been thousands of sources tracking the pandemic. "
+                                      "It is overwhelming as individuals for us to process these incompatible data points "
+                                      "and understand how it captures the current state of the country. COVis seeks to address "
+                                      "this asymmetry and integrates data on healthcare, economics, media, and legislation, "
+                                      "correlated by date. Move the slider to see the progression."
+                        ),
+                    ],
+                    className="two-thirds column"
+                ),
+                html.Div(
+                    [
+                        html.Div(id='day-status'),
+                        html.A(html.Div("Source: Marquee WHO Data"),
+                               href="https://marquee.gs.com/s/developer/datasets/COVID19_COUNTRY_DAILY_WHO",
+                               className="annotation"),
+                    ],
+                    className="one-third column"
+                )
+            ],
+            className="row"
         ),
 
         html.Div(
@@ -302,7 +326,9 @@ app.layout = html.Div(
 
 @app.callback(
     [Output('graph-with-slider', 'figure'),
-     Output('nytimes-content', 'children'),],
+     Output('nytimes-content', 'children'),
+     Output('day-status', 'children')
+     ],
     [Input('my-slider', 'value')])
 def update_figure(day_increment):
     # do smallest day, plus day increment to string?
@@ -326,7 +352,14 @@ def update_figure(day_increment):
     month_articles = articles[articles['date'].map(lambda x: x.month) == goal_date.month]
     article_html = html.Div([html.A(html.P(c['headline']), href=c['url'], target='_blank') for c in month_articles.iloc])
 
-    return (fig, article_html)
+    day_data = who_data.loc[who_data['date'] == goal_date].iloc[0]
+    print(day_data)
+    status = [
+        html.H3("Confirmed: {:}".format(str(int(day_data['totalConfirmed']))), className="status"),
+        html.H3("Deaths: {:}".format(str(int(day_data['totalFatalities']))), className="status"),
+    ]
+
+    return (fig, article_html, status)
 
 
 @app.callback(

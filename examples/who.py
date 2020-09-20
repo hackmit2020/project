@@ -1,4 +1,5 @@
 from data.gs.who import WHOData
 
 d = WHOData()
-print(d.get())
+data = d.get()
+print(data)
