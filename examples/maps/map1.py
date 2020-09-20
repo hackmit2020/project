@@ -9,6 +9,10 @@ from data.fred.fred import Fred
 f = Fred()
 df = f.get()
 
+df['Date'] = df['Date'].dt.strftime("%Y-%m-%d")
+
+df= df[df['Date'].between('2000-01-01', '2021-01-01')]
+
 # TODO: Need to select date
 
 import plotly.express as px
@@ -19,7 +23,8 @@ fig = px.choropleth_mapbox(df, geojson=counties, locations='fips', color='Rate',
                            mapbox_style="carto-positron",
                            zoom=3, center = {"lat": 37.0902, "lon": -95.7129},
                            opacity=0.5,
-                           labels={'unemp':'unemployment rate'}
+                           labels={'unemp':'unemployment rate'},
+                           animation_frame="Date"
                           )
 fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
 fig.show()
