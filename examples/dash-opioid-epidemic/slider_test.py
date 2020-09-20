@@ -15,6 +15,10 @@ from data.jhcovid.jh import JHCovid
 from data.nytimes import NYTQuery
 from data.gmobility.gm import GMData
 
+mapbox_access_token = "pk.eyJ1IjoicGxvdGx5bWFwYm94IiwiYSI6ImNrOWJqb2F4djBnMjEzbG50amg0dnJieG4ifQ.Zme1-Uzoi75IaFbieBDl3A"
+mapbox_style = "mapbox://styles/plotlymapbox/cjvprkf3t1kns1cqjxuxmwixz"
+px.set_mapbox_access_token(mapbox_access_token)
+
 nytimes = NYTQuery()
 articles = nytimes.get()
 
@@ -111,7 +115,7 @@ for i in range(len(step_df)):
 
 print(population_list)
 step_df['Population'] = population_list
-step_df['Normalized change'] = normalized_change
+step_df['Cases per 100,000 people'] = normalized_change
 
 #jh = JHCovid()
 #df_month = jh.get()
@@ -236,11 +240,12 @@ def update_figure(day_increment):
 
     #print(filtered_df)
 
-    fig = px.choropleth_mapbox(filtered_df, geojson=states, locations='FIPS', color='Normalized change',
-                               color_continuous_scale='hot_r', range_color=(0, 60),
-                               mapbox_style="carto-positron", zoom=2, center={"lat": 37.0902, "lon": -95.7129},
-                               hover_name='Normalized change')
-
+    fig = px.choropleth_mapbox(filtered_df, geojson=states, locations='FIPS', color='Cases per 100,000 people',
+                               color_continuous_scale='viridis_r', range_color=(0, 60),
+                               mapbox_style=mapbox_style, zoom=2, center={"lat": 37.0902, "lon": -95.7129},
+                               opacity=1,
+                               hover_name='Cases per 100,000 people')
+    #fig.colorbar.Title('Title')
     fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0}, transition_duration=500)
 
     month_articles = articles[articles['date'].map(lambda x: x.month) == goal_date.month]
