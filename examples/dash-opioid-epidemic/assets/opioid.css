@@ -319,7 +319,7 @@ p {
 
 #description {
     font-size: 1.5rem;
-    border-left: #2cfec1 solid 1rem;
+    border-left: #3CBB75FF solid 1rem;
     padding-left: 1rem;
     max-width: 100rem;
     margin: 2rem 0 3rem 0;
@@ -327,7 +327,12 @@ p {
 
 #logo {
     height: 5rem;
+}
+
+#nyt {
+    height: 5rem;
     margin-bottom: 2rem;
+
 }
 
 #slider-text, #chart-selector {
@@ -649,11 +654,11 @@ hr {
 }
 
 .rc-slider-dot-active, .rc-slider-handle {
-    border-color: #2cfec1 !important;
+    border-color: #3CBB75FF !important;
 }
 
 .rc-slider-track {
-    background-color: #2cfec1 !important
+    background-color: #3CBB75FF !important
 }
 
 .rc-slider-rail {

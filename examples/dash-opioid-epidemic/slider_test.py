@@ -146,7 +146,14 @@ app.layout = html.Div(
         html.Div(
             [
                 html.H1("COVis"),
-                html.H6("HackMIT 2020")
+                html.H6("HackMIT 2020"),
+                html.P(
+                    id="description",
+                    children="† Deaths are classified using the International Classification of Diseases, \
+                    Tenth Revision (ICD–10). Drug-poisoning deaths are defined as having ICD–10 underlying \
+                    cause-of-death codes X40–X44 (unintentional), X60–X64 (suicide), X85 (homicide), or Y10–Y14 \
+                    (undetermined intent).",
+                ),
             ]
         ),
 
@@ -171,7 +178,7 @@ app.layout = html.Div(
                     className="two-thirds column"
                 ),
                 html.Div(
-                    [ html.Img(id="logo", src=app.get_asset_url("new-york-times-logo-black-and-white.png"), className="nytimage"),
+                    [ html.Img(id="nyt", src=app.get_asset_url("new-york-times-logo-black-and-white.png")),
                         #html.H5("New York Times"),
                         html.P("Loading articles...", id="nytimes-content")
 
