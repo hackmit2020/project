@@ -430,7 +430,7 @@ there.
   overflow-y: scroll
 }
 .graph-row {
-  margin: 10px 0;
+  margin: 36px 0;
   height: 500px;
 }
 .panel {
@@ -443,4 +443,16 @@ p.panel-text {
 }
 .dcc_control {
   margin: 25px 0px;
+}
+h1 {
+  text-align: center;
+  color: white;
+}
+h6 {
+  text-align: right;
+}
+#footer {
+  margin-top: 22px;
+  text-align: center;
+  color: #b0aaaa;
 }

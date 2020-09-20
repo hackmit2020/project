@@ -141,6 +141,12 @@ app.layout = html.Div(
     [
         html.Div(
             [
+                html.H1("COVis"),
+                html.H6("HackMIT 2020")
+            ]
+        ),
+        html.Div(
+            [
                 dcc.Slider(
                     id='my-slider',
                     min=min(slider_marks),
@@ -161,7 +167,7 @@ app.layout = html.Div(
                 ),
                 html.Div(
                     [
-                        html.H6("New York Times"),
+                        html.H5("New York Times"),
                         html.P("Loading articles...", id="nytimes-content")
 
                     ],
@@ -210,6 +216,9 @@ app.layout = html.Div(
                 ),
             ],
             className="row"
+        ),
+        html.Div(
+            html.P("Hacked by Lucien Gaitskell, Portia Gaitskell '23, & William Kopans", id="footer")
         )
 
     ],
