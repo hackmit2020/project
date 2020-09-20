@@ -92,10 +92,11 @@ app.layout = html.Div(
                         html.P("Loading articles...", id="nytimes-content")
 
                     ],
+                    id="nyt-container",
                     className="one-third column container"
                 )
             ],
-            className="row"
+            className="row graph-row"
         ),
         html.Div(
             [
@@ -116,7 +117,7 @@ app.layout = html.Div(
         )
 
     ],
-    className="container"
+    className=""
 )
 
 

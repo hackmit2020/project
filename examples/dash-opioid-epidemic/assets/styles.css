@@ -129,7 +129,7 @@ html {
   font-size: 62.5%; }
 body {
   font-size: 1.5em; /* currently ems cause chrome bug misinterpreting rems on body element */
-  margin-top: 20px;
+  margin: 20px 10px;
   line-height: 1.6;
   font-weight: 400;
   font-family: "Open Sans", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -418,3 +418,17 @@ there.
 
 /* Larger than Desktop HD */
 @media (min-width: 1200px) {}
+
+
+/* Custom
+-------------------------------------------------------- */
+#graph-with-slider {
+  height: 500px;
+}
+#nyt-container {
+  max-height: 500px;
+  overflow-y: scroll
+}
+.graph-row {
+  margin: 10px 0;
+}
