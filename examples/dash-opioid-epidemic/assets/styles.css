@@ -477,11 +477,16 @@ h6 {
   width: 50%;
 }
 .status {
-  color: #b10000;
+  color: #fd0000;
 }
 .annotation {
   color: #555555;
 }
 .graph-title{
   margin-top: 16px;
+}
+#day-status {
+  background: darkgrey;
+  border-radius: 10px;
+  padding: 0 10px;
 }
