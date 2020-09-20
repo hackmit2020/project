@@ -434,7 +434,7 @@ there.
   height: 500px;
 }
 .panel {
-  height: 500px;
+  /*height: 500px;*/
   background: #ffffff;
   padding: 10px;
 }
@@ -444,6 +444,13 @@ p.panel-text {
 .dcc_control {
   margin: 25px 0px;
 }
+#mobility {
+  height: 500px;
+}
+#graph4 {
+  margin-top: 20px;
+  height: 300px
+}
 h1 {
   text-align: center;
   color: white;
@@ -451,10 +458,11 @@ h1 {
 h6 {
   text-align: right;
 }
-#footer {
-  margin-top: 22px;
+#nametag {
+  margin: 22px 0;
   text-align: center;
   color: #b0aaaa;
+
 }
 
 .nytimage {
