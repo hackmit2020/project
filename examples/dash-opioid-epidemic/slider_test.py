@@ -11,6 +11,7 @@ from datetime import datetime, timedelta
 from urllib.request import urlopen
 import json
 
+from data.oxford import Oxford
 from data.jhcovid.jh import JHCovid
 from data.nytimes import NYTQuery
 from data.gmobility.gm import GMData
@@ -69,6 +70,9 @@ def slider_steps(step, date_increments):
 
 with urlopen('https://raw.githubusercontent.com/PublicaMundi/MappingAPI/master/data/geojson/us-states.json') as response:
     states = json.load(response)
+
+ox = Oxford()
+policy_data = ox.get()
 
 mb = GMData()
 mobility = mb.get()
@@ -181,46 +185,63 @@ app.layout = html.Div(
             [
                 html.Div(
                     [
-                        html.P("Select state to analyze:",className='panel-text'),
-                        dcc.Dropdown(
-                            id="state-selection",
-                            options=state_select_options,
-                            multi=False,
-                            value='44',
-                            className="dcc_control",
-                        ),
-                        dcc.Dropdown(
-                            id="mobility-selection",
-                            options=mobility_select_options,
-                            multi=False,
-                            value='retail_and_recreation_percent_change_from_baseline',
-                            className="dcc_control",
-                        ),
-                        dcc.Checklist(
-                            id="county-show",
-                            options=[
-                                {'label': 'Separate counties', 'value': 'county'},
+                        html.Div(
+                            [
+                                html.P("Select state to analyze:",className='panel-text'),
+                                dcc.Dropdown(
+                                    id="state-selection",
+                                    options=state_select_options,
+                                    multi=False,
+                                    value='44',
+                                    className="dcc_control",
+                                ),
+                                dcc.Dropdown(
+                                    id="mobility-selection",
+                                    options=mobility_select_options,
+                                    multi=False,
+                                    value='retail_and_recreation_percent_change_from_baseline',
+                                    className="dcc_control",
+                                ),
+                                dcc.Checklist(
+                                    id="county-show",
+                                    options=[
+                                        {'label': 'Separate counties', 'value': 'county'},
+                                    ],
+                                    value=[],
+                                    className="dcc_control"
+                                )
                             ],
-                            value=[],
-                            className="dcc_control"
+                            className="row panel"
+                        ),
+                        html.Div(
+                            [
+                                dcc.Graph(id='policy', className="graph")
+                            ],
+                            className="row"
                         )
-
                     ],
-                    className="one-third column panel"
+                    className="one-third column"
                 ),
                 html.Div(
                     [
-                        dcc.Graph(id='mobility')
+                        html.Div(
+                            [
+                                dcc.Graph(id='mobility', className="graph")
+                            ],
+                            className="row"
+                        ),
+                        html.Div(
+                            [
+                                html.P("Hacked by Lucien Gaitskell, Portia Gaitskell '23, & William Kopans", id="nametag")
+                            ],
+                            className="row"
+                        )
                     ],
                     className="two-thirds column"
                 ),
             ],
-            className="row"
+            className="row graph-row"
         ),
-        html.Div(
-            html.P("Hacked by Lucien Gaitskell, Portia Gaitskell '23, & William Kopans", id="footer")
-        )
-
     ],
     className=""
 )
@@ -264,7 +285,10 @@ def update_figure(day_increment):
 
 
 @app.callback(
-    Output("mobility", "figure"),
+    [
+        Output("mobility", "figure"),
+        Output("policy", "figure"),
+    ],
     [
         Input("state-selection", "value"),
         Input("mobility-selection", "value"),
@@ -284,9 +308,12 @@ def update_production_text(state, mobility_set, county_show):
     else:
         state_mobility = state_mobility.groupby(state_mobility['date']).mean()
         state_mobility.reset_index(inplace=True)
-    fig = px.line(state_mobility, x='date', y=mobility_set, **kwargs)
+    fig_mobility = px.line(state_mobility, x='date', y=mobility_set, **kwargs)
 
-    return fig
+    state_policy = policy_data[policy_data['RegionCode'] == "US_" + us.states.lookup(state).abbr]
+    fig_policy = px.line(state_policy, x='Date', y='C2_Workplace closing')
+
+    return (fig_mobility, fig_policy)
 
 
 if __name__ == '__main__':
