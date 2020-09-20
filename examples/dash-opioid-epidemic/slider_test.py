@@ -1,16 +1,10 @@
+# IMPORTS
 import dash
 import dash_html_components as html
 import dash_core_components as dcc
-
 import os
-import pathlib
-import re
-
 import pandas as pd
 from dash.dependencies import Input, Output, State
-#import cufflinks as cf
-
-
 import plotly.express as px
 from datetime import datetime, timedelta
 from urllib.request import urlopen
@@ -33,23 +27,33 @@ state_names = ["Alaska", "Alabama", "Arkansas", "American Samoa", "Arizona", "Ca
                "Texas", "Utah", "Virginia", "Virgin Islands", "Vermont", "Washington",
                "Wisconsin", "West Virginia", "Wyoming"]
 
-#print(len(state_names))
+PACKAGE_DIR = os.path.dirname(__file__)
+state_pop_dir = os.path.join(PACKAGE_DIR, "data/state_populations.csv")
+df_pop = pd.read_csv(state_pop_dir)
+
+population_dictionary = {}
+for i in range(len(df_pop)):
+    population_dictionary[df_pop.iloc[i]['NAME']] = round(df_pop.iloc[i]['POPESTIMATE2019']/(10**5),3)
+
+#MIN_DATE = datetime(2020,3,15)
 
 # step = num days
 def df_step(df, step=10):
     # get earliest date
     new_df = pd.DataFrame(columns=df.columns)
 
-    date = (min(df['Date']).to_pydatetime())
+    #date = (min(df['Date']).to_pydatetime())
+    date = MIN_DATE
+    date_increments = []
 
-    date_increments = [date]
     while date < max(df['Date']).to_pydatetime():
+        date_increments.append(date)
         #print(date)
         new_df = pd.concat([new_df, df.loc[df.Date.eq(date)]])
         date += timedelta(days=step)
-        date_increments.append(date)
 
     return new_df, date_increments
+
 
 def slider_steps(step, date_increments):
     k = range(0,len(date_increments)*step, step)
@@ -57,26 +61,55 @@ def slider_steps(step, date_increments):
 
     return dict(zip(k,v)), dict(zip(k,date_increments))
 
-df = JHCovid().get()
-df = df[(df['Province/State'].isin(state_names))]
+with urlopen('https://raw.githubusercontent.com/PublicaMundi/MappingAPI/master/data/geojson/us-states.json') as response:
+    states = json.load(response)
 
 PACKAGE_DIR = os.path.dirname(__file__)
 DATA_DIR = os.path.join(PACKAGE_DIR, "data/")
 
-
+df = JHCovid().get()
+df_all_data = df[(df['Province/State'].isin(state_names))]
+MIN_DATE = (min(df_all_data['Date']).to_pydatetime())
 external_stylesheets = ['styles.css']
 
-with urlopen('https://raw.githubusercontent.com/PublicaMundi/MappingAPI/master/data/geojson/us-states.json') as response:
-    states = json.load(response)
-
 step = 10
-test_df, date_increments = df_step(df, step)
+step_df, date_increments = df_step(df_all_data, step)
 slider_marks, value_marks = slider_steps(step, date_increments)
+slider_set = (datetime(2020,5,15) - MIN_DATE).days
+slider_set = int(slider_set - (slider_set%step))
 
-#print(slider_marks)
+population_list = []
+normalized_change = []
+for i in range(len(step_df)):
+    #print(step_df.iloc[i]["Province/State"])
+    #print(population_dictionary[step_df.iloc[i]["Province/State"]])
+    #print(step_df.iloc[i]["Change"])
+    try:
+        population = population_dictionary[step_df.iloc[i]["Province/State"]]
+        population_list.append(population)
 
-jh = JHCovid()
-df_month = jh.get()
+        print('SUCCESS')
+        print()
+    except:
+        print('FAIL')
+        print()
+        population = 10
+        population_list.append(population)
+        # normalized_change.append(step_df.iloc[i]["Change"]/0.5)
+
+    try:
+         norm_change = step_df.iloc[i]["Change"] / population
+         normalized_change.append(round(norm_change,2))
+
+    except:
+         normalized_change.append(0)
+
+print(population_list)
+step_df['Population'] = population_list
+step_df['Normalized change'] = normalized_change
+
+#jh = JHCovid()
+#df_month = jh.get()
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
@@ -90,7 +123,7 @@ app.layout = html.Div(
                     max=max(slider_marks),
                     step=step,
                     marks=slider_marks,
-                    value=min(slider_marks)
+                    value=slider_set
                 ),
             ]
         ),
@@ -139,24 +172,6 @@ app.layout = html.Div(
 #MONTHS = ['FEB', 'MAR', 'APR', 'MAY', 'JUN','JUL','AUG','SEP']
 #MONTHS_NUM = [2,3,4,5,6,7,8,9]
 
-# DEFAULT_COLORSCALE = [
-#     "#f2fffb",
-#     "#bbffeb",
-#     "#98ffe0",
-#     "#79ffd6",
-#     "#6df0c8",
-#     "#69e7c0",
-#     "#59dab2",
-#     "#45d0a5",
-#     "#31c194",
-#     "#2bb489",
-#     "#25a27b",
-#     "#1e906d",
-#     "#188463",
-#     "#157658",
-#     "#11684d",
-#     "#10523e",
-# ]
 
 #slider_marks = dict(zip(MONTHS_NUM,MONTHS))
 
@@ -169,23 +184,19 @@ app.layout = html.Div(
     [Input('my-slider', 'value')])
 def update_figure(day_increment):
     # do smallest day, plus day increment to string?
-    min_date = (min(test_df['Date']).to_pydatetime())
-    goal_date = min_date+timedelta(day_increment)
-    filtered_df = test_df[test_df['Date'].map(lambda x: x.to_pydatetime()) == goal_date]
+
+    goal_date = MIN_DATE+timedelta(day_increment)
+    filtered_df = step_df[step_df['Date'].map(lambda x: x.to_pydatetime()) == goal_date]
 
     # filtered_df = df_month[df_month['Date'].map(lambda x: datetime.strptime(x,'%Y-%m-%d').month) == selected_month]
     # filtered_df = df_month[df_month['Date'].map(lambda x: datetime.strptime(x,'%Y-%m-%d').month) == selected_month]
 
     #print(filtered_df)
 
-    fig = px.choropleth_mapbox(filtered_df, geojson=states, locations='FIPS', color='Confirmed',
-                               color_continuous_scale='hot', range_color=(0, 20000),
+    fig = px.choropleth_mapbox(filtered_df, geojson=states, locations='FIPS', color='Normalized change',
+                               color_continuous_scale='hot_r', range_color=(0, 60),
                                mapbox_style="carto-positron", zoom=2, center={"lat": 37.0902, "lon": -95.7129},
-                               hover_name='Confirmed')
-
-    # fig = px.scatter(filtered_df, x="gdpPercap", y="lifeExp",
-    #                  size="pop", color="continent", hover_name="country",
-    #                  log_x=True, size_max=55)
+                               hover_name='Normalized change')
 
     fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0}, transition_duration=500)
 
@@ -194,51 +205,5 @@ def update_figure(day_increment):
 
     return (fig, article_html)
 
-
 if __name__ == '__main__':
     app.run_server(debug=True)
-
-'''
-MONTHS = ['FEB', 'MAR', 'APR', 'MAY', 'JUN','JUL','AUG','SEP']
-MONTHS_NUM = [2,3,4,5,6,7,8,9]
-
-slider_marks = dict(zip(MONTHS_NUM,MONTHS))
-print(slider_marks)
-
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
-app.layout = html.Div([
-    dcc.Slider(
-        id='my-slider',
-        min=2,
-        max=9,
-        step=None,
-        marks=slider_marks,
-        value=2
-    ),
-    html.Div(id='slider-output-container')
-])
-
-# Load COVID data
-with urlopen('https://raw.githubusercontent.com/PublicaMundi/MappingAPI/master/data/geojson/us-states.json') as response:
-    states = json.load(response)
-
-PACKAGE_DIR = os.path.dirname(__file__)
-DATA_DIR = os.path.join(PACKAGE_DIR, "data/")
-
-df = JHCovid().get()
-print(df['Confirmed'])
-
-
-@app.callback(
-    dash.dependencies.Output('slider-output-container', 'children'),
-    [dash.dependencies.Input('my-slider', 'value')])
-
-
-def update_output(value):
-    return 'You have selected "{}"'.format(slider_marks[value])
-
-
-
-if __name__ == '__main__':
-    app.run_server(debug=True)
-'''
