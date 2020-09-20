@@ -313,7 +313,8 @@ p {
 }
 
 #heatmap-title {
-    font-size: 2rem;
+    color: white;
+    font-size: 1.9rem;
 }
 
 #description {
@@ -337,6 +338,10 @@ p {
 #slider-text, #chart-selector {
     margin-bottom: 2rem !important;
     font-size: 2rem;
+}
+
+#graph-with-slider {
+    height: 5rem
 }
 
 
@@ -668,13 +673,13 @@ hr {
 /* Heatmap
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 #heatmap-container {
-    margin: 2.5rem 0 0 0;
+    margin: 0 0 0 0;
     background-color: #252e3f;
 }
 
 #heatmap-title {
     margin: 0;
-    padding: 1rem;
+    padding: 0;
 }
 
 #county-choropleth {
@@ -863,3 +868,4 @@ div, svg {
 ._dash-undo-redo {
     display: none;
 }
+
