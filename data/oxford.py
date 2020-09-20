@@ -21,6 +21,7 @@ class Oxford(Data):
         for name, fip in source_map.items():
             final_map['US_' + name] = fip
 
+        df['Date'] = pd.to_datetime(df['Date'].astype(str))
         df['FIPS'] = df['RegionCode'].map(final_map)
         df.reset_index(inplace=True, drop=True)
         return df
