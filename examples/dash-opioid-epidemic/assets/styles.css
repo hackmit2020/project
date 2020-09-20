@@ -40,7 +40,6 @@
   width: 100%;
   max-width: 960px;
   margin: 0 auto;
-  margin-top: 20px;
   padding: 0 15px;
   box-sizing: border-box; }
 .column,
@@ -130,6 +129,7 @@ html {
   font-size: 62.5%; }
 body {
   font-size: 1.5em; /* currently ems cause chrome bug misinterpreting rems on body element */
+  margin-top: 20px;
   line-height: 1.6;
   font-weight: 400;
   font-family: "Open Sans", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;

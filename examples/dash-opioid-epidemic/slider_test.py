@@ -74,7 +74,7 @@ app.layout = html.Div(
                     max=9,
                     step=None,
                     marks=slider_marks,
-                    value=2
+                    value=3
                 ),
             ]
         ),
@@ -122,7 +122,7 @@ def update_figure(selected_month):
     #                  size="pop", color="continent", hover_name="country",
     #                  log_x=True, size_max=55)
 
-    fig.update_layout(transition_duration=500)
+    fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0}, transition_duration=500)
 
     month_articles = articles[articles['date'].map(lambda x: x.month) == selected_month]
     article_html = html.Div([html.A(html.P(c['headline']), href=c['url'], target='_blank') for c in month_articles.iloc])
