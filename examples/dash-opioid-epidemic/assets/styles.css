@@ -445,10 +445,14 @@ p.panel-text {
   margin: 25px 0px;
 }
 #mobility {
-  height: 500px;
+  height: 400px;
 }
-#graph4 {
-  margin-top: 20px;
+#econ {
+  margin-top: 10px;
+  height: 444px;
+}
+#policy-container {
+  margin-top: 30px;
   height: 300px
 }
 h1 {

@@ -15,10 +15,13 @@ from data.oxford import Oxford
 from data.jhcovid.jh import JHCovid
 from data.nytimes import NYTQuery
 from data.gmobility.gm import GMData
+from data.fred.fred import Fred
 
 mapbox_access_token = "pk.eyJ1IjoicGxvdGx5bWFwYm94IiwiYSI6ImNrOWJqb2F4djBnMjEzbG50amg0dnJieG4ifQ.Zme1-Uzoi75IaFbieBDl3A"
 mapbox_style = "mapbox://styles/plotlymapbox/cjvprkf3t1kns1cqjxuxmwixz"
 px.set_mapbox_access_token(mapbox_access_token)
+
+GRAPH_MARGIN = 20
 
 nytimes = NYTQuery()
 articles = nytimes.get()
@@ -70,6 +73,9 @@ def slider_steps(step, date_increments):
 
 with urlopen('https://raw.githubusercontent.com/PublicaMundi/MappingAPI/master/data/geojson/us-states.json') as response:
     states = json.load(response)
+
+fred = Fred()
+econ_data = fred.get()
 
 ox = Oxford()
 policy_data = ox.get()
@@ -137,6 +143,15 @@ mobility_select_options = [
                  'transit_stations_percent_change_from_baseline',
                  'workplaces_percent_change_from_baseline',
                  'residential_percent_change_from_baseline']
+]
+
+policy_select_options = [
+    {"label": name[3:], "value": name}
+    for name in [
+        'C1_School closing', 'C2_Workplace closing', 'C3_Cancel public events', 'C4_Restrictions on gatherings',
+        'C5_Close public transport', 'C6_Stay at home requirements', 'C7_Restrictions on internal movement',
+        'C8_International travel controls'
+    ]
 ]
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
@@ -217,15 +232,28 @@ app.layout = html.Div(
                                     ],
                                     value=[],
                                     className="dcc_control"
-                                )
+                                ),
+                                html.Hr(),
+                                dcc.Dropdown(
+                                    id="policy-selection",
+                                    options=policy_select_options,
+                                    multi=False,
+                                    value='C1_School closing',
+                                    className="dcc_control",
+                                ),
+
                             ],
                             className="row panel"
                         ),
                         html.Div(
                             [
-                                dcc.Graph(id='policy', className="graph")
+                                html.A(html.P("Oxford Policy Documentation"),
+                                       href="https://github.com/OxCGRT/covid-policy-tracker/blob/master/documentation/codebook.md",
+                                       target="_blank"),
+                                dcc.Graph(id='policy', className="")
                             ],
-                            className="row"
+                            className="row graph",
+                            id="policy-container"
                         )
                     ],
                     className="one-third column"
@@ -235,6 +263,12 @@ app.layout = html.Div(
                         html.Div(
                             [
                                 dcc.Graph(id='mobility', className="graph")
+                            ],
+                            className="row"
+                        ),
+                        html.Div(
+                            [
+                                dcc.Graph(id='econ', className="graph")
                             ],
                             className="row"
                         ),
@@ -296,14 +330,16 @@ def update_figure(day_increment):
     [
         Output("mobility", "figure"),
         Output("policy", "figure"),
+        Output("econ", "figure")
     ],
     [
         Input("state-selection", "value"),
         Input("mobility-selection", "value"),
         Input("county-show", "value"),
+        Input("policy-selection", "value")
     ],
 )
-def update_production_text(state, mobility_set, county_show):
+def update_production_text(state, mobility_set, county_show, policy_set):
     print(state)
     state_mobility = mobility[mobility['sub_region_1'] == us.states.lookup(state).name]
     #print(state_mobility)
@@ -319,9 +355,13 @@ def update_production_text(state, mobility_set, county_show):
     fig_mobility = px.line(state_mobility, x='date', y=mobility_set, **kwargs)
 
     state_policy = policy_data[policy_data['RegionCode'] == "US_" + us.states.lookup(state).abbr]
-    fig_policy = px.line(state_policy, x='Date', y='C2_Workplace closing')
+    fig_policy = px.line(state_policy, x='Date', y=policy_set)
+    fig_policy.update_layout(margin={"r": GRAPH_MARGIN, "t": GRAPH_MARGIN, "l": GRAPH_MARGIN, "b": GRAPH_MARGIN})
 
-    return (fig_mobility, fig_policy)
+    state_econ = econ_data[econ_data['Region'] == us.states.lookup(state).abbr]
+    fig_econ = px.line(state_econ, x='Date', y='Rate')
+
+    return (fig_mobility, fig_policy, fig_econ)
 
 
 if __name__ == '__main__':
