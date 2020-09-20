@@ -97,11 +97,11 @@ for i in range(len(step_df)):
         population = population_dictionary[step_df.iloc[i]["Province/State"]]
         population_list.append(population)
 
-        print('SUCCESS')
-        print()
+        #print('SUCCESS')
+        #print()
     except:
-        print('FAIL')
-        print()
+        #print('FAIL')
+        #print()
         population = 10
         population_list.append(population)
         # normalized_change.append(step_df.iloc[i]["Change"]/0.5)
@@ -145,6 +145,7 @@ app.layout = html.Div(
                 html.H6("HackMIT 2020")
             ]
         ),
+
         html.Div(
             [
                 dcc.Slider(
@@ -166,8 +167,8 @@ app.layout = html.Div(
                     className="two-thirds column"
                 ),
                 html.Div(
-                    [
-                        html.H5("New York Times"),
+                    [ html.Img(id="logo", src=app.get_asset_url("new-york-times-logo-black-and-white.png"), className="nytimage"),
+                        #html.H5("New York Times"),
                         html.P("Loading articles...", id="nytimes-content")
 
                     ],

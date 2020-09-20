@@ -456,3 +456,10 @@ h6 {
   text-align: center;
   color: #b0aaaa;
 }
+
+.nytimage {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+}
