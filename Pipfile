@@ -11,6 +11,7 @@ dash = "*"
 quandl = "*"
 pyarrow = "*"
 us = "*"
+gunicorn = "*"
 
 [requires]
 python_version = "3.8"
