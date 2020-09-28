@@ -88,12 +88,12 @@ who = WHOData()
 who_data = who.get()
 
 PACKAGE_DIR = os.path.dirname(__file__)
-DATA_DIR = os.path.join(PACKAGE_DIR, "data/")
+DATA_DIR = os.path.join(PACKAGE_DIR, "../examples/dash-opioid-epidemic/data/")
 
 df = JHCovid().get()
 df_all_data = df[(df['Province/State'].isin(state_names))]
 MIN_DATE = (min(df_all_data['Date']).to_pydatetime())
-external_stylesheets = ['styles.css']
+external_stylesheets = ['styles.css', 'styles2.css']
 
 step = 10
 step_df, date_increments = df_step(df_all_data, step)
