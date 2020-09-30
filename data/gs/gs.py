@@ -5,8 +5,16 @@ https://marquee.gs.com/s/discover/data-services/catalog
 """
 
 from ..data import Data, DataFrame
-from credentials.config import GSConfig
 from gs_quant.session import GsSession
+
+try:
+    from credentials.config import GSConfig
+except ModuleNotFoundError:
+    import os
+
+    class GSConfig:
+        client_id = os.environ.get('gs_client_id')
+        client_secret = os.environ.get('gs_client_secret')
 
 
 class GSData(Data):

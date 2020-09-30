@@ -8,11 +8,14 @@ import pandas as pd
 
 from typing import List
 
-from credentials.config import QuandlConfig
-
 from ..data import Data, DataFrame
 
-quandl.ApiConfig.api_key = QuandlConfig.api_key
+try:
+    from credentials.config import QuandlConfig
+    quandl.ApiConfig.api_key = QuandlConfig.api_key
+except ModuleNotFoundError:
+    import os
+    quandl.ApiConfig.api_key = os.environ.get("quandl_api_key")
 
 
 STATES = us.states.mapping('fips', 'abbr', us.STATES)
