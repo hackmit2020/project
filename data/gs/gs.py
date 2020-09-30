@@ -20,5 +20,6 @@ except ModuleNotFoundError:
 class GSData(Data):
     def __init__(self):
         super().__init__()
+        print("QUANT: {} {}".format(GSConfig.client_id, GSConfig.client_secret))
         GsSession.use(client_id=GSConfig.client_id, client_secret=GSConfig.client_secret,
                       scopes=('read_product_data',))  # authenticate GS Session with credentials
