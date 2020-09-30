@@ -50,18 +50,24 @@ class NYTQuery(Data):
         r = requests.get(url)
         data = r.json()
 
-        docs = data['response']['docs']
+        response = data.get('response', None)
 
-        all_article_data = []
+        if response is not None:
+            docs = response['docs']
 
-        for article in docs:
-            all_article_data.append(
-                NYTArticle(headline=article['headline']['main'], abstract=article['abstract'], url=article['web_url'],
-                           date=article['pub_date']).to_dict()
-            )
+            all_article_data = []
 
-        df = pd.DataFrame(all_article_data, columns=NYTArticle.COLUMNS)
-        return df
+            for article in docs:
+                all_article_data.append(
+                    NYTArticle(headline=article['headline']['main'], abstract=article['abstract'], url=article['web_url'],
+                               date=article['pub_date']).to_dict()
+                )
+
+            df = pd.DataFrame(all_article_data, columns=NYTArticle.COLUMNS)
+            return df
+        else:
+            print("NYT loading failure")
+            return pd.DataFrame([], columns=NYTArticle.COLUMNS)
 
     def _remote_load(self) -> DataFrame:
         all_articles = []
