@@ -159,6 +159,7 @@ policy_select_options = [
 ]
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+server = app.server  # For Gunicorn
 
 app.layout = html.Div(
     [
