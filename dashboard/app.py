@@ -362,12 +362,16 @@ def update_figure(day_increment):
     month_articles = articles[articles['date'].map(lambda x: x.month) == goal_date.month]
     article_html = html.Div([html.A(html.P(c['headline']), href=c['url'], target='_blank') for c in month_articles.iloc])
 
-    day_data = who_data.loc[who_data['date'] == goal_date].iloc[0]
-    print(day_data)
-    status = [
-        html.H3("Confirmed: {:}".format(str(int(day_data['totalConfirmed']))), className="status"),
-        html.H3("Deaths: {:}".format(str(int(day_data['totalFatalities']))), className="status"),
-    ]
+    if not who_data.empty:
+        day_data = who_data.loc[who_data['date'] == goal_date].iloc[0]
+        print(day_data)
+        status = [
+            html.H3("Confirmed: {:}".format(str(int(day_data['totalConfirmed']))), className="status"),
+            html.H3("Deaths: {:}".format(str(int(day_data['totalFatalities']))), className="status"),
+        ]
+    else:
+        status = [
+        ]
 
     return (fig, article_html, status)
 
