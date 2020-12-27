@@ -1,6 +1,6 @@
 # HackMIT 2020 Project
 
-# COVis
+# [COVis](https://covis-dashboard.herokuapp.com)
 
 Throughout this global pandemic, there have been thousands of sources tracking the pandemic. It is overwhelming as individuals to process these disparate data sources when trying to understand the current state of the country. COVis seeks to address this asymmetry by integrating data on healthcare, economics, media, and legislation, all correlated by date. Move the slider to see the progression!
 
